@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import me.xiaopan.sketch.CancelCause;
 import me.xiaopan.sketch.FailCause;
@@ -31,7 +32,7 @@ public class BitmapMaker {
         this.context = context;
     }
 
-    public void setAssembleBitmap(final ImageView imageView, final ArrayList<String> urlList, final int width, final int height) {
+    public void setAssembleBitmap(final ImageView imageView, final List<String> urlList, final int width, final int height) {
         needHeight = height;
         needWidth = width;
         /**先检查内存中是否有该图片**/
@@ -51,7 +52,6 @@ public class BitmapMaker {
                     public void onStarted() {
 
                     }
-
                     @Override
                     public void onCompleted(Drawable drawable, ImageFrom imageFrom, String mimeType) {
                         bitmapList.add(drawable);
@@ -95,7 +95,6 @@ public class BitmapMaker {
                 drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
                         : Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmapFinal);
-        //canvas.setBitmap(bitmap);
         drawable.setBounds(0, 0, bitmapTemp.getWidth(), bitmapTemp.getHeight());
         bitmapTemp.recycle();
         drawable.draw(canvas);
@@ -126,33 +125,6 @@ public class BitmapMaker {
         return bmp;
     }
 
-    //使用Bitmap加Matrix来缩放
-    public Bitmap resizeImageWithHeight(Bitmap bitmapOrigin, int h) {
-        int width = bitmapOrigin.getWidth();
-        int height = bitmapOrigin.getHeight();
-        float scaleHeight = ((float) h) / height;
-        Matrix matrix = new Matrix();
-        matrix.postScale(scaleHeight, scaleHeight);
-        Bitmap resizedBitmap = Bitmap.createBitmap(bitmapOrigin, 0, 0, width,
-                height, matrix, true);
-        return resizedBitmap;
-    }
-
-    public Bitmap makeWithBitmaps(ArrayList<Bitmap> bitmapList) {
-        int smallWidth = bitmapList.get(0).getWidth();
-        int smallHeight = bitmapList.get(0).getHeight();
-        int width = smallWidth * 3;
-        int height = smallHeight * 4;
-        Bitmap result = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        Canvas canvas = new Canvas(result);
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 3; j++) {
-                canvas.drawBitmap(bitmapList.get((i * 3 + j) % bitmapList.size()), smallWidth * j, smallHeight * i, null);
-            }
-        }
-        return rotateBitmap(result, 45);
-    }
-
     /**
      * 组合图片，循环的从列表中取图片，组装成4*3的大图片
      * 小图片的大小是要显示区域的一半，高度等比拉伸
@@ -181,6 +153,7 @@ public class BitmapMaker {
         }
         return result;
     }
+
 
 }
 
